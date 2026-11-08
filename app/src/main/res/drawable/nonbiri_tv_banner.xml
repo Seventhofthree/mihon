@@ -17,7 +17,7 @@
     <!-- Warm chair, cat and open book -->
     <path android:fillColor="#793F57" android:pathData="M61,142Q77,87 138,86Q194,88 211,145L215,180H54z"/>
     <path android:fillColor="#C16D72" android:pathData="M65,150Q83,111 136,112Q187,113 210,151L210,180H62z"/>
-    <path android:fillColor="#242031" android:pathData="M102,126Q107,101 120,101L129,113L140,99Q168,111 167,131Q163,150 133,153Q108,148 102,126z"/>
+    <path android:fillColor="#080A10" android:pathData="M102,126Q107,101 120,101L129,113L140,99Q168,111 167,131Q163,150 133,153Q108,148 102,126z"/>
     <path android:fillColor="#FFF0D5" android:pathData="M123,135Q128,129 134,134Q143,130 147,135Q143,147 134,146Q129,145 123,135z"/>
     <path android:fillColor="#FFECD0" android:pathData="M67,144Q103,129 135,146V180Q102,166 67,177zM142,146Q183,128 227,145V177Q185,167 142,180z"/>
     <path android:fillColor="#CB9C8E" android:pathData="M135,146h7v34h-7z"/>
