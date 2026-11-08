@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -25,6 +28,7 @@ fun BrowseSourceComfortableGrid(
     contentPadding: PaddingValues,
     onMangaClick: (Manga) -> Unit,
     onMangaLongClick: (Manga) -> Unit,
+    firstItemFocusRequester: FocusRequester? = null,
 ) {
     LazyVerticalGrid(
         columns = columns,
@@ -42,6 +46,11 @@ fun BrowseSourceComfortableGrid(
             val manga by mangaList[index]?.collectAsState() ?: return@items
             BrowseSourceComfortableGridItem(
                 manga = manga,
+                modifier = if (index == 0 && firstItemFocusRequester != null) {
+                    Modifier.focusRequester(firstItemFocusRequester)
+                } else {
+                    Modifier
+                },
                 onClick = { onMangaClick(manga) },
                 onLongClick = { onMangaLongClick(manga) },
             )
@@ -58,11 +67,13 @@ fun BrowseSourceComfortableGrid(
 @Composable
 private fun BrowseSourceComfortableGridItem(
     manga: Manga,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = onClick,
 ) {
     MangaComfortableGridItem(
         title = manga.title,
+        modifier = modifier,
         coverData = MangaCover(
             mangaId = manga.id,
             sourceId = manga.source,
