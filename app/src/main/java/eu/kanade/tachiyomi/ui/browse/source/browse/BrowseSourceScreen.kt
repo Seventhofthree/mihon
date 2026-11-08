@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.browse.source.browse
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -22,7 +24,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
@@ -108,6 +121,7 @@ data class BrowseSourceScreen(
         val haptic = LocalHapticFeedback.current
         val uriHandler = LocalUriHandler.current
         val snackbarHostState = remember { SnackbarHostState() }
+        val firstComicFocusRequester = remember { FocusRequester() }
 
         val onHelpClick = { uriHandler.openUri(LocalSource.HELP_URL) }
         val onWebViewClick = f@{
@@ -148,10 +162,19 @@ data class BrowseSourceScreen(
                     Row(
                         modifier = Modifier
                             .horizontalScroll(rememberScrollState())
+                            .onPreviewKeyEvent { event ->
+                                // TV DPAD_DOWN from any listing chip enters the comic grid.
+                                if (event.key == Key.DirectionDown && event.type == KeyEventType.KeyDown) {
+                                    firstComicFocusRequester.requestFocus()
+                                } else {
+                                    false
+                                }
+                            }
                             .padding(horizontal = MaterialTheme.padding.small),
                         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
                     ) {
                         FilterChip(
+                            modifier = tvChipFocusOutline(),
                             selected = state.listing == Listing.Popular,
                             onClick = {
                                 viewModel.resetFilters()
@@ -171,6 +194,7 @@ data class BrowseSourceScreen(
                         )
                         if (source.supportsLatest) {
                             FilterChip(
+                                modifier = tvChipFocusOutline(),
                                 selected = state.listing == Listing.Latest,
                                 onClick = {
                                     viewModel.resetFilters()
@@ -220,6 +244,7 @@ data class BrowseSourceScreen(
                 displayMode = viewModel.displayMode,
                 snackbarHostState = snackbarHostState,
                 contentPadding = paddingValues,
+                firstItemFocusRequester = firstComicFocusRequester,
                 onWebViewClick = onWebViewClick,
                 onHelpClick = { uriHandler.openUri(Constants.URL_HELP) },
                 onLocalSourceHelpClick = onHelpClick,
@@ -315,4 +340,19 @@ data class BrowseSourceScreen(
         class Text(txt: String) : SearchType(txt)
         class Genre(txt: String) : SearchType(txt)
     }
+}
+
+/**
+ * A visible TV-focused outline is essential at couch distance.
+ */
+@Composable
+private fun tvChipFocusOutline(): Modifier {
+    var focused by remember { mutableStateOf(false) }
+    return Modifier
+        .onFocusChanged { focused = it.isFocused }
+        .border(
+            width = if (focused) 3.dp else 0.dp,
+            color = if (focused) MaterialTheme.colorScheme.primary else Color.Transparent,
+            shape = RoundedCornerShape(12.dp),
+        )
 }
