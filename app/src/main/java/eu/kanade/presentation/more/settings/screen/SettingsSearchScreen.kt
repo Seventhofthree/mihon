@@ -1,8 +1,13 @@
 package eu.kanade.presentation.more.settings.screen
 
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.view.InputDevice
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -68,6 +75,24 @@ class SettingsSearchScreen : Screen() {
         val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
         val listState = rememberLazyListState()
+        val context = LocalContext.current
+        val configuration = LocalConfiguration.current
+        val physicalKeyboardOnTv = remember(context, configuration.keyboard) {
+            context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) &&
+                (
+                    configuration.keyboard == Configuration.KEYBOARD_QWERTY ||
+                        InputDevice.getDeviceIds().any { id ->
+                            InputDevice.getDevice(id)?.let { device ->
+                                !device.isVirtual &&
+                                    device.keyboardType == InputDevice.KEYBOARD_TYPE_ALPHABETIC
+                            } == true
+                        }
+                    )
+        }
+        val imeVisible = WindowInsets.isImeVisible
+        LaunchedEffect(physicalKeyboardOnTv, imeVisible) {
+            if (physicalKeyboardOnTv && imeVisible) softKeyboardController?.hide()
+        }
 
         // Hide keyboard on change screen
         DisposableEffect(Unit) {
@@ -111,7 +136,10 @@ class SettingsSearchScreen : Screen() {
                                 textStyle = MaterialTheme.typography.bodyLarge
                                     .copy(color = MaterialTheme.colorScheme.onSurface),
                                 lineLimits = TextFieldLineLimits.SingleLine,
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Search,
+                                    showKeyboardOnFocus = !physicalKeyboardOnTv,
+                                ),
                                 onKeyboardAction = { focusManager.clearFocus() },
                                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                                 decorator = {
