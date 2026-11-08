@@ -483,6 +483,20 @@ class ReaderActivity : BaseActivity() {
     private fun onKeyEvent(event: KeyEvent): Boolean {
         val viewer = viewer ?: return false
         val navigation = settingsViewModel.navigation.value ?: return false
+
+        // The page-turn shortcuts must stop intercepting directional keys
+        // while the reader controls are visible. Otherwise TV remotes cannot
+        // move focus between the buttons and page navigator.
+        if (viewModel.state.value.menuVisible &&
+            event.key in listOf(
+                Key.DirectionUp, Key.DirectionDown,
+                Key.DirectionLeft, Key.DirectionRight,
+                Key.PageUp, Key.PageDown,
+            )
+        ) {
+            return false
+        }
+
         val isUp = event.type == KeyEventType.KeyUp
         val action = when (event.key) {
             Key.VolumeDown, Key.VolumeUp -> {
