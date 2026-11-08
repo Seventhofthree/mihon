@@ -1,6 +1,7 @@
 package eu.kanade.presentation.library.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -22,12 +23,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -79,8 +85,10 @@ fun MangaCompactGridItem(
     coverAlpha: Float = 1f,
     coverBadgeStart: @Composable (RowScope.() -> Unit)? = null,
     coverBadgeEnd: @Composable (RowScope.() -> Unit)? = null,
+    modifier: Modifier = Modifier,
 ) {
     GridItemSelectable(
+        modifier = modifier,
         isSelected = isSelected,
         onClick = onClick,
         onLongClick = onLongClick,
@@ -185,8 +193,10 @@ fun MangaComfortableGridItem(
     coverBadgeStart: (@Composable RowScope.() -> Unit)? = null,
     coverBadgeEnd: (@Composable RowScope.() -> Unit)? = null,
     onClickContinueReading: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
 ) {
     GridItemSelectable(
+        modifier = modifier,
         isSelected = isSelected,
         onClick = onClick,
         onLongClick = onLongClick,
@@ -296,8 +306,15 @@ private fun GridItemSelectable(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    var isFocused by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
+            .onFocusChanged { isFocused = it.isFocused }
+            .border(
+                width = if (isFocused) 3.dp else 0.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.small,
+            )
             .clip(MaterialTheme.shapes.small)
             .combinedClickable(
                 onClick = onClick,
@@ -338,9 +355,17 @@ fun MangaListItem(
     isSelected: Boolean = false,
     coverAlpha: Float = 1f,
     onClickContinueReading: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
 ) {
+    var isFocused by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier
+        modifier = modifier
+            .onFocusChanged { isFocused = it.isFocused }
+            .border(
+                width = if (isFocused) 3.dp else 0.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.small,
+            )
             .selectedBackground(isSelected)
             .height(56.dp)
             .combinedClickable(
