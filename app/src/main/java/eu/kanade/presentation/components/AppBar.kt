@@ -1,8 +1,13 @@
 package eu.kanade.presentation.components
 
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.view.InputDevice
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
@@ -44,6 +49,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -306,6 +313,32 @@ fun SearchToolbar(
 
             val keyboardController = LocalSoftwareKeyboardController.current
             val focusManager = LocalFocusManager.current
+            val context = LocalContext.current
+            val configuration = LocalConfiguration.current
+
+            // Only suppress the TV keyboard if an actual alphabetic hardware
+            // keyboard is attached. A mouse cursor by itself is not enough:
+            // mouse-only viewers still need a way to type.
+            val physicalKeyboardOnTv = remember(context, configuration.keyboard) {
+                context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) &&
+                    (
+                        configuration.keyboard == Configuration.KEYBOARD_QWERTY ||
+                            InputDevice.getDeviceIds().any { deviceId ->
+                                InputDevice.getDevice(deviceId)?.let { device ->
+                                    !device.isVirtual &&
+                                        device.keyboardType == InputDevice.KEYBOARD_TYPE_ALPHABETIC
+                                } == true
+                            }
+                        )
+            }
+
+            // Android TV IMEs may still open for a mouse click rather than
+            // a focus request. If that happens, dismiss the IME but preserve
+            // the focused text field so the physical keyboard keeps working.
+            val imeVisible = WindowInsets.isImeVisible
+            LaunchedEffect(physicalKeyboardOnTv, imeVisible) {
+                if (physicalKeyboardOnTv && imeVisible) keyboardController?.hide()
+            }
 
             val searchAndClearFocus: () -> Unit = f@{
                 val query = searchFieldState.text.toString()
@@ -323,13 +356,18 @@ fun SearchToolbar(
                     .focusRequester(focusRequester)
                     .runOnEnterKeyPressed(action = searchAndClearFocus)
                     .showSoftKeyboard(remember { searchQuery.isEmpty() })
-                    .clearFocusOnSoftKeyboardHide(),
+                    .then(
+                        if (physicalKeyboardOnTv) Modifier else Modifier.clearFocusOnSoftKeyboardHide(),
+                    ),
                 textStyle = MaterialTheme.typography.titleMedium.copy(
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Normal,
                     fontSize = 18.sp,
                 ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Search,
+                    showKeyboardOnFocus = !physicalKeyboardOnTv,
+                ),
                 onKeyboardAction = { searchAndClearFocus() },
                 lineLimits = TextFieldLineLimits.SingleLine,
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
