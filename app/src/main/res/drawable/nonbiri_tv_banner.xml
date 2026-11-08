@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp"
+    android:viewportWidth="320" android:viewportHeight="180">
+    <path android:fillColor="#241B36" android:pathData="M0,0h320v180H0z"/>
+    <path android:fillColor="#3A2B48" android:pathData="M0,125Q54,15 159,28Q252,35 320,120V180H0z"/>
+    <path android:fillColor="#211A30" android:pathData="M12,126Q55,40 155,40Q254,43 309,126V180H12z"/>
+    <path android:fillColor="#5E3553" android:pathData="M0,147h320v33H0z"/>
+    <!-- Corner reading lamp -->
+    <path android:fillColor="#8B4B53" android:pathData="M246,18h54v90h-54z"/>
+    <path android:fillColor="#FFCA7A" android:pathData="M252,24h42v77h-42z"/>
+    <path android:fillColor="#E99D61" android:pathData="M265,27h16v73h-16z"/>
+    <path android:strokeColor="#6A3656" android:strokeWidth="3"
+        android:pathData="M252,63h42M273,24v77"/>
+    <path android:fillColor="#5B9D77" android:pathData="M52,124Q26,100 35,76Q52,80 55,109Q64,70 85,73Q79,103 58,121z"/>
+    <path android:fillColor="#C58D66" android:pathData="M38,121h37l-5,19H44z"/>
+    <!-- Warm chair, cat and open book -->
+    <path android:fillColor="#793F57" android:pathData="M61,142Q77,87 138,86Q194,88 211,145L215,180H54z"/>
+    <path android:fillColor="#C16D72" android:pathData="M65,150Q83,111 136,112Q187,113 210,151L210,180H62z"/>
+    <path android:fillColor="#242031" android:pathData="M102,126Q107,101 120,101L129,113L140,99Q168,111 167,131Q163,150 133,153Q108,148 102,126z"/>
+    <path android:fillColor="#FFF0D5" android:pathData="M123,135Q128,129 134,134Q143,130 147,135Q143,147 134,146Q129,145 123,135z"/>
+    <path android:fillColor="#FFECD0" android:pathData="M67,144Q103,129 135,146V180Q102,166 67,177zM142,146Q183,128 227,145V177Q185,167 142,180z"/>
+    <path android:fillColor="#CB9C8E" android:pathData="M135,146h7v34h-7z"/>
+    <path android:strokeColor="#A98380" android:strokeWidth="2"
+        android:pathData="M81,151Q104,145 126,154M82,161Q101,155 124,165M150,154Q176,143 213,152M150,164Q183,152 213,162"/>
+</vector>
