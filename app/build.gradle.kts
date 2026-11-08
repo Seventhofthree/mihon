@@ -35,10 +35,10 @@ android {
     namespace = "eu.kanade.tachiyomi"
 
     defaultConfig {
-        applicationId = "io.github.seventhofthree.nonbiri"
+        applicationId = "io.github.seventhofthree.nonbiri.preview"
 
-        versionCode = 39
-        versionName = "0.2.0"
+        versionCode = 40
+        versionName = "0.3.0-test"
 
         buildConfigField("boolean", "TELEMETRY_INCLUDED", "${Config.includeTelemetry}")
         buildConfigField("boolean", "UPDATER_ENABLED", "false")
