@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Monochrome sleeping black cat over an open book. -->
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M15,62Q19,37 44,35L48,44L59,34Q83,42 84,64Q82,83 55,86Q27,85 15,62z"/>
+    <path android:fillColor="#00000000" android:strokeColor="#241B36"
+        android:strokeWidth="3" android:strokeLineCap="round"
+        android:pathData="M34,64Q41,70 48,64M57,64Q64,70 71,63"/>
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M7,76Q29,67 51,78L51,101Q30,92 7,96zM56,78Q78,67 101,76V96Q77,92 56,101z"/>
+    <path android:fillColor="#00000000" android:strokeColor="#241B36"
+        android:strokeWidth="2" android:pathData="M53,78V101M16,82Q30,78 44,86M62,85Q78,78 91,82"/>
+</vector>
