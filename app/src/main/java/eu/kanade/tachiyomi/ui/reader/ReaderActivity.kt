@@ -507,6 +507,12 @@ class ReaderActivity : BaseActivity() {
             Key.DirectionDown, Key.PageDown -> Action.FORWARD
             Key.DirectionUp, Key.PageUp -> Action.BACKWARD
             Key.Menu -> Action.MENU
+            // On TV, the remote's OK button opens reader controls.
+            // When controls are visible, let the focused button handle OK.
+            Key.DirectionCenter, Key.Enter -> {
+                if (viewModel.state.value.menuVisible) return false
+                Action.MENU
+            }
             Key.N -> {
                 if (isUp) loadNextChapter()
                 return true
